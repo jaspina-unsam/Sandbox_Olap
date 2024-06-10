@@ -9,14 +9,31 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * La clase CsvParser implementa la interfaz DataParser y lee datos de un archivo CSV.
+ * @see DataParser
+ */
 public class CsvParser implements DataParser {
+    private String delimiter;
+    private boolean dropIndex;
 
-    public List<List<String>> readData(String filepath, String delimiter, boolean dropIndex) throws IOException {
+    public CsvParser() {
+        this.delimiter = ",";
+        this.dropIndex = false;
+    }
+
+    public CsvParser(String delimiter, boolean dropIndex) {
+        this.delimiter = delimiter;
+        this.dropIndex = dropIndex;
+    }
+
+    @Override
+    public List<List<String>> read(String filepath) throws IOException {
         List<List<String>> data = new ArrayList<>();
         BufferedReader buffer = new BufferedReader(new FileReader(filepath));
         String line;
         while ((line = buffer.readLine()) != null) {
-            List<String> values = _getSplitLine(line, delimiter);
+            List<String> values = splitLine(line);
             if (dropIndex) {
                 data.add(values.subList(1, values.size()));
             } else {
@@ -28,10 +45,15 @@ public class CsvParser implements DataParser {
         return data;
     }
 
-    private List<String> _getSplitLine(String inputString, String delimiter) {
+    /**
+     * Método para dividir un string en una lista de strings.
+     * @param inputString
+     * @return
+     */
+    private List<String> splitLine(String inputString) {
         List<String> splitList = new ArrayList<>();
         String outputString = inputString;
-        String auxDelimiter = ";";
+        String auxDelimiter = "+";
 
         Pattern p = Pattern.compile("(\"[^\"]*\")");
         Matcher m = p.matcher(inputString);
@@ -48,10 +70,5 @@ public class CsvParser implements DataParser {
         }
 
         return splitList;
-    }
-
-    @Override
-    public List<List<String>> read(String filepath) throws IOException {
-        return readData(filepath, ",", true);
     }
 }
