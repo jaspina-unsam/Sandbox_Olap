@@ -55,12 +55,11 @@ public class Cube {
     public Cube filter(String dimension, String level, String value) {
         String key = dimensions.get(dimension).getIdKey();
         List<Cell> newCells = new ArrayList<>();
-        for (Cell cell : cells) {
-            List<Integer> idsToSearch = dimensions.get(dimension).getIdList(level, value);
-            for (Integer id : idsToSearch) {
+        List<Integer> idsToSearch = dimensions.get(dimension).getIdList(level, value);
+        for (int id : idsToSearch) {
+            for (Cell cell : cells) {
                 if (cell.isResult(key, id)) {
                     newCells.add(cell);
-                    // System.out.println(obs);
                 }
             }
         }
