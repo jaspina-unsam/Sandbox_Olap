@@ -10,6 +10,9 @@ public class Count extends Measure {
 
     @Override
     public double calc(List<Double> values) {
+        if (values == null) {
+            return 0;
+        }
         return values.size();
     }
 

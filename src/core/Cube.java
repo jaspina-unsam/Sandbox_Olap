@@ -109,16 +109,35 @@ public class Cube {
     }
 
     private List<Cell> searchCells(String dimension, String key, String[] values) {
-        List<Cell> newCells = new ArrayList<>();
+        return searchCells(this.cells, dimension, key, values);
+    }
+
+    private List<Cell> searchCells(List<Cell> cellsToSearch, String dimension, String key, String[] values) {
+        List<Cell> result = new ArrayList<>();
         List<Integer> idsToSearch = getIdsToSearch(dimension, values);
         for (int id : idsToSearch) {
-            for (Cell cell : cells) {
+            for (Cell cell : cellsToSearch) {
                 if (cell.isResult(key, id)) {
-                    newCells.add(cell);
+                    result.add(cell);
                 }
             }
         }
-        return newCells;
+        return result;
+    }
+
+    private List<Cell> searchCells(String dim1, String key1, String[] values1, String dim2, String key2, String[] values2) {
+        List<Cell> cellsDim1 = searchCells(dim1, key1, values1);
+        List<Cell> resultCells = searchCells(cellsDim1, dim2, key2, values2);
+
+        return resultCells;
+    }
+
+    private List<Cell> searchCells(String dim1, String key1, String[] values1, String dim2, String key2, String[] values2, String dim3, String key3, String[] values3) {
+        List<Cell> cellsDim1 = searchCells(dim1, key1, values1);
+        List<Cell> cellsDim2 = searchCells(cellsDim1, dim2, key2, values2);
+        List<Cell> resultCells = searchCells(cellsDim2, dim3, key3, values3);
+
+        return resultCells;
     }
 
     public Cube slice(String dimension, String value) {
@@ -133,13 +152,20 @@ public class Cube {
         return new Cube(this.dimensions, this.measures, this.facts, newCells);
     }
 
-    // TODO Dice 3 versiones
-    /**
-     * String dim1 , String[] valoresDim1
-     * * String dim1 , String[] valoresDim1, String dim2 , String[] valoresDim2
-     * * String dim1 , String[] valoresDim1, String dim2 , String[] valoresDim2,
-     * String dim3 , String[] valoresDim3
-     */
+    public Cube dice(String dim1, String[] values1, String dim2, String[] values2) {
+        String key1 = dimensions.get(dim1).getIdKey();
+        String key2 = dimensions.get(dim2).getIdKey();
+        List<Cell> newCells = searchCells(dim1, key1, values1, dim2, key2, values2);
+        return new Cube(this.dimensions, this.measures, this.facts, newCells);
+    }
+
+    public Cube dice(String dim1, String[] values1, String dim2, String[] values2, String dim3, String[] values3) {
+        String key1 = dimensions.get(dim1).getIdKey();
+        String key2 = dimensions.get(dim2).getIdKey();
+        String key3 = dimensions.get(dim3).getIdKey();
+        List<Cell> newCells = searchCells(dim1, key1, values1, dim2, key2, values2, dim3, key3, values3);
+        return new Cube(this.dimensions, this.measures, this.facts, newCells);
+    }
 
     @Override
     public String toString() {
@@ -150,13 +176,12 @@ public class Cube {
         return Cell.cellFromGroup(searchCells(dimension, dimensions.get(dimension).getIdKey(), new String[] { value }));
     }
 
+    public Cell getCell(String dim1, String value1, String dim2, String value2) {
+        return Cell.cellFromGroup(searchCells(dim1, dimensions.get(dim1).getIdKey(), new String[] { value1 }, dim2, dimensions.get(dim2).getIdKey(), new String[] { value2 }));
+    }
+
     public String getSelectedFact() {
         return facts.get(selectedFact);
     }
-
-    /**
-     * Slice y dice son extensiones de filter
-     * roll-up y drill-down operan sobre el cubo o sobre dimensiones?
-     */
 
 }

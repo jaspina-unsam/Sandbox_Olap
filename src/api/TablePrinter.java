@@ -1,7 +1,5 @@
 package api;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -21,7 +19,7 @@ public class TablePrinter {
         Set<Object> levelElements = new TreeSet<>(lvl.getElements());
         String selectedFact = cube.getSelectedFact();
         Measure measure = cube.getSelectedMeasure();
-        String[][] tableData = new String[levelElements.size()+1][2];
+        String[][] tableData = new String[levelElements.size() + 1][2];
         tableData[0][0] = String.format("%s (%s)", lvl.getName(), dimension);
         tableData[0][1] = String.format("%s (%s)", selectedFact, measure.getName());
 
@@ -29,9 +27,41 @@ public class TablePrinter {
             String element = levelElements.toArray()[i].toString();
             Cell cell = cube.getCell(dimension, element.toString());
             String value = String.format("%.2f", measure.calc(cell.getFacts(selectedFact)));
-            tableData[i+1][0] = element;
-            tableData[i+1][1] = value;
+            tableData[i + 1][0] = element;
+            tableData[i + 1][1] = value;
         }
+        print(tableData);
+    }
+
+    public static void display(Cube cube, String rowDim, String colDim) {
+        Level rowLevel = cube.getDimension(rowDim).getActiveLevel();
+        Level colLevel = cube.getDimension(colDim).getActiveLevel();
+        Set<Object> rowElements = new TreeSet<>(rowLevel.getElements());
+        Set<Object> colElements = new TreeSet<>(colLevel.getElements());
+        String selectedFact = cube.getSelectedFact();
+        Measure measure = cube.getSelectedMeasure();
+        String[][] tableData = new String[rowElements.size() + 1][colElements.size() + 1];
+        tableData[0][0] = String.format("%s (%s)", rowLevel.getName(), rowDim);
+
+        for (int i = 0; i < colElements.size(); i++) {
+            tableData[0][i + 1] = colElements.toArray()[i].toString();
+        }
+
+        int row = 1;
+        for (Object rowElement : rowElements) {
+            tableData[row][0] = rowElement.toString();
+            int col = 1;
+            for (Object colElement : colElements) {
+                Cell cell = cube.getCell(rowDim, rowElement.toString(), colDim, colElement.toString());
+                String value = String.format("%.2f", measure.calc(cell.getFacts(selectedFact)));
+                tableData[row][col] = value;
+                col++;
+            }
+            row++;
+        }
+
+        System.out.println(String.format("%s (%s) vs %s (%s) [%s (%s)]", rowLevel.getName(), rowDim,
+                colLevel.getName(), colDim, selectedFact, measure.getName()));
         print(tableData);
     }
 
@@ -48,6 +78,7 @@ public class TablePrinter {
             printRow(row, columnWidths);
             printSeparator(columnWidths);
         }
+        System.out.println("\n");
     }
 
     private static int[] getColumnWidths(String[][] tableData) {

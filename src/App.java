@@ -21,9 +21,17 @@ public class App {
 
         // print + consultas
         cube = cube.slice("fechas","2018");
-        cube.selectFact("costo");
+        cube.selectFact("cantidad");
         cube.selectMeasure("suma");
+        TablePrinter.display(cube, "productos");
+
+        cube.drillDown("puntos_venta");
+        cube.drillDown("puntos_venta");
         cube.drillDown("fechas");
-        TablePrinter.display(cube, "fechas");
+        cube.drillDown("fechas");
+        TablePrinter.display(cube, "puntos_venta", "fechas");
+
+        Cube dicedCube = cube.dice("puntos_venta", new String[] {"Alabama", "Alaska", "Arizona"});
+        TablePrinter.display(dicedCube, "puntos_venta", "fechas");
     }
 }

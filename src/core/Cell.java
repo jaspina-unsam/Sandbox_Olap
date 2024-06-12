@@ -19,6 +19,27 @@ public class Cell {
         facts = new HashMap<>();
     }
 
+    public Cell(String idKey, Integer keyValue) {
+        keys = new HashMap<>();
+        keys.put(idKey, keyValue);
+        facts = new HashMap<>();
+    }
+
+    public Cell(String idKey1, Integer keyValue1, String idKey2, Integer keyValue2, String idKey3, Integer keyValue3) {
+        facts = new HashMap<>();
+        keys = new HashMap<>();
+        keys.put(idKey1, keyValue1);
+        keys.put(idKey2, keyValue2);
+        keys.put(idKey3, keyValue3);
+    }
+
+    public Cell(String idKey1, Integer keyValue1, String idKey2, Integer keyValue2) {
+        facts = new HashMap<>();
+        keys = new HashMap<>();
+        keys.put(idKey1, keyValue1);
+        keys.put(idKey2, keyValue2);
+    }
+
     public void addKey(String key, Integer value) {
         keys.put(key, value);
     }
@@ -35,6 +56,14 @@ public class Cell {
 
     public boolean isResult(String key, Integer value) {
         return keys.get(key).equals(value);
+    }
+
+    public boolean isResult(String key1, int value1, String key2, int value2) {
+        return keys.get(key1).equals(value1) && keys.get(key2).equals(value2);
+    }
+
+    public boolean isResult(String key1, int value1, String key2, int value2, String key3, int value3) {
+        return keys.get(key1).equals(value1) && keys.get(key2).equals(value2);
     }
 
     public static Cell cellFromGroup(List<Cell> cells) {
