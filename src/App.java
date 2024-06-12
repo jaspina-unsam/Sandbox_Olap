@@ -20,14 +20,10 @@ public class App {
         Cube cube = builder.buildCube();
 
         // print + consultas
-        TablePrinter.display(new String[][] {
-                { "Name", "Age", "City" },
-                { "Alice", "24", "New York" },
-                { "Bob", "30", "Los Angeles" },
-                { "Charlie", "28", "Chicago" }
-        });
-
-        TablePrinter.display(cube);
-        TablePrinter.display(cube.filter("fechas", "fecha", "2017-07-10"));
+        cube = cube.slice("fechas","2018");
+        cube.selectFact("costo");
+        cube.selectMeasure("suma");
+        cube.drillDown("fechas");
+        TablePrinter.display(cube, "fechas");
     }
 }

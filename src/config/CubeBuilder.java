@@ -3,6 +3,7 @@ package config;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -35,16 +36,16 @@ public class CubeBuilder {
     public void addDimension(String name, String idKey, List<DataType> model, DataParser parser, String path) throws IOException {
         Map<String, Level> levels = new HashMap<>();
         List<List<String>> data = parser.read(path);
-
         List<String> headers = data.get(0);
 
-        // Validate the data
+        // Validaciones
         if (headers.size() != model.size()) {
             throw new IOException("The model and the data do not match");
         }
         if (headers.indexOf(idKey) == -1) {
             throw new IOException("The id key does not exist in the data");
         }
+
         foreignKeys.add(idKey);
 
         for (int i = 0; i < headers.size(); i++) {
@@ -70,7 +71,9 @@ public class CubeBuilder {
             }
             levels.put(headers.get(i), new Level(headers.get(i), elements));
         }
-        List<String> hierarchy = headers.subList(1, headers.size());
+
+        List<String> hierarchy = new ArrayList<>(headers);
+        hierarchy.remove(idKey);
         Collections.reverse(hierarchy);
         this.dimensions.add(new Dimension(name, idKey, levels, hierarchy));
     }
@@ -93,12 +96,16 @@ public class CubeBuilder {
 
         for (int i = 1; i < data.size(); i++) {
             Map<String, Integer> keys = new HashMap<>();
-            Map<String, Double> facts = new HashMap<>();
+            Map<String, List<Double>> facts = new HashMap<>();
             for (int j = 0; j < headers.size(); j++) {
                 if (foreignKeys.contains(headers.get(j))) {
                     keys.put(headers.get(j), Integer.parseInt(data.get(i).get(j)));
                 } else {
-                    facts.put(headers.get(j), Double.parseDouble(data.get(i).get(j)));
+                    if (facts.containsKey(headers.get(j))) {
+                        facts.get(headers.get(j)).add(Double.parseDouble(data.get(i).get(j)));
+                    } else {
+                        facts.put(headers.get(j), new ArrayList<>(Arrays.asList(Double.parseDouble(data.get(i).get(j)))));
+                    }
                 }
             }
             this.cells.add(new Cell(keys, facts));
@@ -121,9 +128,9 @@ public class CubeBuilder {
     }
 
     private void addMeasures(Cube cube) {
-        cube.addMeasure("contar", new Count());
-        cube.addMeasure("suma", new Sum());
-        cube.addMeasure("min", new Min());
-        cube.addMeasure("max", new Max());
+        cube.addMeasure(new Count());
+        cube.addMeasure(new Sum());
+        cube.addMeasure(new Min());
+        cube.addMeasure(new Max());
     }
 }

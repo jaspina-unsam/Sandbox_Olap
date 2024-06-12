@@ -1,14 +1,41 @@
 package api;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import core.Cell;
 import core.Cube;
+import core.Level;
+import metrics.Measure;
 
 public class TablePrinter {
 
     public static void display(Cube cube) {
-
+        System.out.println(cube);
     }
 
-    public static void display(String[][] tableData) {
+    public static void display(Cube cube, String dimension) {
+        Level lvl = cube.getDimension(dimension).getActiveLevel();
+        Set<Object> levelElements = new TreeSet<>(lvl.getElements());
+        String selectedFact = cube.getSelectedFact();
+        Measure measure = cube.getSelectedMeasure();
+        String[][] tableData = new String[levelElements.size()+1][2];
+        tableData[0][0] = String.format("%s (%s)", lvl.getName(), dimension);
+        tableData[0][1] = String.format("%s (%s)", selectedFact, measure.getName());
+
+        for (int i = 0; i < levelElements.size(); i++) {
+            String element = levelElements.toArray()[i].toString();
+            Cell cell = cube.getCell(dimension, element.toString());
+            String value = String.format("%.2f", measure.calc(cell.getFacts(selectedFact)));
+            tableData[i+1][0] = element;
+            tableData[i+1][1] = value;
+        }
+        print(tableData);
+    }
+
+    private static void print(String[][] tableData) {
         if (tableData == null || tableData.length == 0) {
             System.out.println("No data to display.");
             return;
