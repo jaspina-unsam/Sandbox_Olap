@@ -2,7 +2,7 @@ import api.CsvParser;
 import config.CubeBuilder;
 import core.Cube;
 import data.model.Model;
-import api.TablePrinter;
+import printer.TablePrinter;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -18,6 +18,7 @@ public class App {
 
         // buildear el cubo
         Cube cube = builder.buildCube();
+        Cube cube2 = cube.cloneCube();
 
         // print + consultas
         cube = cube.slice("fechas","2018");
@@ -31,7 +32,7 @@ public class App {
         cube.drillDown("fechas");
         TablePrinter.display(cube, "puntos_venta", "fechas");
 
-        Cube dicedCube = cube.dice("puntos_venta", new String[] {"Alabama", "Alaska", "Arizona"});
+        Cube dicedCube = cube.dice("puntos_venta", new String[] {"Alabama", "Arizona"});
         TablePrinter.display(dicedCube, "puntos_venta", "fechas");
     }
 }

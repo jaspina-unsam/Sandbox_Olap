@@ -184,4 +184,8 @@ public class Cube {
         return facts.get(selectedFact);
     }
 
+    public Cube cloneCube() {
+        return new Cube(this.dimensions, this.measures, this.facts, this.cells);
+    }
+
 }

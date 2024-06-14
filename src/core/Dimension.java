@@ -57,10 +57,12 @@ public class Dimension {
     }
 
     public int getCurrentLevel() {
+        // me devuelve la referencia al nivel actual en entero
         return this.currentLevel;
     }
 
     public Level getActiveLevel() {
+        // me devuelve un objeto
         return levels.get(hierarchy.get(currentLevel));
     }
 

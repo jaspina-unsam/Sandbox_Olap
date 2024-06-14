@@ -128,8 +128,8 @@ public class CubeBuilder {
     }
 
     private void addMeasures(Cube cube) {
-        cube.addMeasure(new Count());
         cube.addMeasure(new Sum());
+        cube.addMeasure(new Count());
         cube.addMeasure(new Min());
         cube.addMeasure(new Max());
     }

@@ -1,4 +1,4 @@
-package api;
+package printer;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -8,11 +8,11 @@ import core.Cube;
 import core.Level;
 import metrics.Measure;
 
+/**
+ * Clase que imprime en consola los datos de un cubo.
+ * El método display() recibe un cubo con cierto estado, y una o dos dimensiones.
+ */
 public class TablePrinter {
-
-    public static void display(Cube cube) {
-        System.out.println(cube);
-    }
 
     public static void display(Cube cube, String dimension) {
         Level lvl = cube.getDimension(dimension).getActiveLevel();
